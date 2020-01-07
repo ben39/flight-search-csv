@@ -1,0 +1,46 @@
+<div style="margin: 10px">
+  <mat-form-field style="display:inline-block; margin: 5px; width: 400px">
+    <input matInput placeholder="Origin" [matAutocomplete]="autoOrigin" [formControl]="origin">    
+    <mat-autocomplete #autoOrigin="matAutocomplete">
+      <mat-option *ngIf="isLoading" class="is-loading">Loading...</mat-option>
+      <ng-container *ngIf="!isLoading">
+        <mat-option *ngFor="let airport of suggestedOrigins" [value]="airport.station">
+          <span><b>{{airport.station}}</b> {{airport.station_full_name}}</span>
+        </mat-option>
+      </ng-container>
+    </mat-autocomplete>
+  </mat-form-field>
+  <mat-form-field style="display:inline-block; margin: 5px; width: 400px">
+    <input matInput placeholder="Destination"  [matAutocomplete]="autoDestination" [formControl]="destination">    
+    <mat-autocomplete #autoDestination="matAutocomplete">
+      <mat-option *ngIf="isLoading" class="is-loading">Loading...</mat-option>
+      <ng-container *ngIf="!isLoading">
+        <mat-option *ngFor="let airport of suggestedDestinations" [value]="airport.station">
+          <span><b>{{airport.station}}</b> {{airport.station_full_name}}</span>
+        </mat-option>
+      </ng-container>
+    </mat-autocomplete>
+  </mat-form-field>
+ <button mat-raised-button color="primary" style="display:inline-block; margin: 5px" (click)="searchFlights()">Search</button>
+</div>
+
+<div style="margin: 20px">
+  <div *ngIf="isLoading"></div>
+  <ng-container *ngIf="errorMsg">
+    {{errorMsg}}
+  </ng-container>
+</div>
+
+<div style="margin: 20px">
+  <div *ngIf="flightData && flightData.length">
+    <table mat-table [dataSource]="flightData" class="mat-elevation-z8 table table-striped table-responsive-md" *ngIf="!errorMsg" style="border-spacing: 5px;">
+       <ng-container [matColumnDef]="column" *ngFor="let column of flights">
+         <th mat-header-cell *matHeaderCellDef> {{column}} </th>
+         <td mat-cell *matCellDef="let element"> {{element[column]}} </td>
+       </ng-container>
+       <tr mat-header-row *matHeaderRowDef="columns"></tr>
+       <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+  </table>
+  </div>
+  <div *ngIf="isSearched && !errorMsg && (!flightData || !flightData.length)">No flights found.</div>
+</div>
